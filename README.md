@@ -25,14 +25,18 @@ Follow these instructions to get a copy of the project up and running on your lo
 * **Epic Games Launcher** installed.
 
 ### Installation
+1. **Fork the repo:**
+Best to Fork the repo first to your own repository, then clone to work on it locally.
 
-1. **Clone the repository:**
-    ```sh
-    git clone https://github.com/josh-hall-griffith/UE_Network_Lab.git
-    ```
+3. **Rebuild the project:**
+Before opening, right click on the UE_Network_Lab.uproject, and select "Generate Visual Studio Project Files". You should see new UE_Network_Lab.sln file appear.
 
-2. **Open the Editor:**
-    Double-click `UE_Network_Lab.uproject` to launch the Unreal Editor. The **Advanced Sessions Plugin** is included in the `Plugins/` directory and should initialise automatically.
+3. **Rebuild the Project:**
+    Double-click `UE_Network_Lab.uproject` to launch the Unreal Editor. You may be prompted to rebuild the project as the Advanced Session Plugin may require it. If you get an error during this stage, try to open the UE_Network_Lab.sln file in visal studio 2022, and rebuild the project using "Development Editor" build configuration.
+The **Advanced Sessions Plugin** is included in the `Plugins/` directory and should initialise automatically.
+
+4. **Open the Project:**
+Once this is done, you should be able to either double click on the UE_Network_Lab.uproject or open it via the Epic Games Launcher.
 
 ---
 
@@ -55,7 +59,7 @@ All experiments must use the following button mapping schema to maintain compati
 | **Action E: Pause** | Esc | Start/Menu |
 
 ### 🧪 Game Rules & Aesthetics
-* **60-Second Loop:** The experiment must resolve to a **Pass/Fail** state within 60-120 seconds.
+* **60-Second Loop:** The experiment must resolve to a **Pass/Fail** state within 60 seconds.
 * **Visuals:** Use a strict "Testing Facility" style. Stick to simple geometric shapes and the provided **Lab White** and **Hazard Orange** materials. This ensures project size remains small and performance remains high.
 * **Naming Conventions:** Follow industry-standard **PascalCase** for all assets (e.g., `BP_Experiment_CharacterName`, `M_Lab_Floor`).
 
@@ -65,16 +69,22 @@ All experiments must use the following button mapping schema to maintain compati
 
 The Lab uses a robust state-driven architecture to manage multiplayer sessions.
 
-### Experiment States (`ControlLab_GameState_e`)
-The `ControlLab_GameState_e` enum in the **GameState** controls the flow of the game:
+### Experiment States (`EControlLab_ExperimentState`)
+![EControlLab_ExperimentState](media/EControlLab.png)  
+The `EControlLab_ExperimentState` enum in the **GameState** controls the flow of the game:
 *   `MainMenu`: Initial state for server discovery.
-*   `Lobby`: Players wait for the host. The **Start** button is only visible to the **Host** and becomes active once 2 or more players have joined.
-*   `Playing`: The active experiment loop. 
+*   `GameLobby`: Players wait for the host. The **Start** button is only visible to the **Host** and becomes active once 2 or more players have joined.
+*   `GamePlaying`: The active experiment loop. 
+*   `GamePaused`: The active experiment loop. 
 *   `GameOver`: Triggered when the timer hits zero or a player wins.
 
-### Networking Essentials
+### Game State
+The game state base class will have some key variables used to drive gameplay. However this game state can be overriden with changes to the default values or add further functionality/variables.  
+![Game State Variables](media/gameStateVars.png)  
+Base Variables include:  
 *   **remainingTime (float):** Stored in the `GameState`. This uses **RepNotify** (`OnRep_RemainingTime`) to ensure every client's `WBP_HUD_TIMER` is synchronised with the server's authoritative clock.
-*   **winnerID (int):** Defaulting to `-1` (no winner), this is updated on the Server and replicated to all clients to display the victory screen.
+*   **winnerID (int):** Defaulting to `0` (no winner), this is updated on the Server and replicated to all clients to display the victory screen.
+*   **experimentState (EControlLab_ExperimentState):** Defaulting to `MainMenu`, this is updated on the Server and replicated to all clients. Bind events to this to trigger GUI Widgets. Or Set this variable to trigger game state change e.g. game over.
 *   **Session Cleanup:** If the **Host** exits the session, a custom cleanup event triggers to return all connected clients back to the Main Menu automatically.
 
 ---
@@ -111,6 +121,16 @@ Level contributions must follow the folder and naming structure located in `Cont
 ![WorldSettings](media/WorldSettings.png)
 After duplicating the template map, open **World Settings** and ensure the **GameMode Override** is set to a GameMode class that uses your new character and state classes. 
 
+### GameMode Settings
+![GameMode](media/GameMode.png)
+When you are using a new custom game mode, also ensure you select custom: 
+* Game State Class
+* Player Controller Class
+* Player State Class
+* Default Pawn Class
+
+This allows you to modify the inherited classes for custom game behaviour.
+
 ---
 
 ## ❓ FAQ
@@ -134,6 +154,11 @@ Ensure your experiment's logic sets the `EExperimentState` to `GameOver` when th
 
 ---
 
+## Known Issues
+This is an early preview project, so it will come with some outlier bugs and usability issues. If you find a bug or have a recommendation, please follow the "Contributing" section below to make a change or suggestion.
+
+---
+
 ## 🤝 Contributing
 
 This project is an educational framework. If you find bugs in the core networking or lobby systems, please fork the repo and create a pull request.
@@ -142,7 +167,8 @@ This project is an educational framework. If you find bugs in the core networkin
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+5. Open a Pull Request (PR)
+6. The team will review your PR and accept or provide feedback before merging.
 
 ---
 
