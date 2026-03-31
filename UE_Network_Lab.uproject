@@ -3,6 +3,9 @@
 	"EngineAssociation": "5.4",
 	"Category": "",
 	"Description": "",
+	"BuildSettings": {
+    "PlatformVersion": "14.38"
+	},
 	"Modules": [
 		{
 			"Name": "UE_Network_Lab",
