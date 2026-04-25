@@ -2,7 +2,7 @@
 ![The Control Lab](media/controlLab.gif)
 
 A networked party-game template and experimental testbed for multiplayer gameplay engineering.
-
+Assignment 1 submission branch prepared for pull request.
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 📖 About The Project
